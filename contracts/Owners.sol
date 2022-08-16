@@ -12,7 +12,6 @@ import "./Utils/ContextUpgradeable.sol";
  */
 abstract contract Owners is Initializable, ContextUpgradeable {
 
-
     uint256 internal ownersCount;
     uint256 internal minApproval;
     address[] internal owners;
@@ -29,7 +28,7 @@ abstract contract Owners is Initializable, ContextUpgradeable {
                 isOwner[msg.sender] = true;
             }
         }
-        require(_exists(msg.sender), "Owners: owners only");
+        require(isOwner[msg.sender] == true, "Owners: owners only");
         _;
     }
 
@@ -46,9 +45,10 @@ abstract contract Owners is Initializable, ContextUpgradeable {
         for(uint256 i = 0; i < _owners.length; i++) {
             address owner = _owners[i];
             require(owner != address(0), "Owners: no zero address allowed");
-            require(!_exists(owner), "Owners: address duplicate");
-            isOwner[owner] = true;
+            require(isOwner[owner] == false, "Owners: address duplicate");
+            
             owners.push(owner);
+            isOwner[owner] = true;
         }
         require(_owners.length > 0, "Owners: no owner yet");
         require(
@@ -88,7 +88,7 @@ abstract contract Owners is Initializable, ContextUpgradeable {
      * `_minApproval` is at least one, & equal to, or less than `ownersCount`
      */
     function addOwner(address newOwner, uint256 _minApproval) public virtual onlyOwners() {
-        require(!_exists(newOwner) && newOwner != address(0), "Owners: owner exists or zero address");
+        require(isOwner[newOwner] == false && newOwner != address(0), "Owners: owner exists or zero address");
         owners.push(newOwner);
         ownersCount++;
         isOwner[newOwner] = true;
@@ -126,11 +126,6 @@ abstract contract Owners is Initializable, ContextUpgradeable {
         );
         minApproval = _minApproval;
         emit ApprovalsChanged(minApproval);
-    }
-
-
-    function _exists(address owner) private view returns(bool) {
-        return isOwner[owner];
     }
 
 }
