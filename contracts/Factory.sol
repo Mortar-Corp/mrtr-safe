@@ -17,12 +17,15 @@ contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable {
 
     address private walletBeacon;
     address[] private walletProxies;
+    mapping(address => address[]) internal ownerWallets;
+   
 
     event FactoryInit(address indexed walletBeacon);
-    event WalletInit(address indexed walletProxy, uint256 count, address sender);
+    event ProxyDeployed(address indexed walletProxy, uint256 count);
+    event WalletInit(address[] owners, uint256 minApproval, address indexed sender);
 
     function __Factory_init() public virtual initializer {
-        UpgradeableBeacon _walletBeacon = new UpgradeableBeacon(address(new MortarGnosis()));
+        UpgradeableBeacon _walletBeacon = new UpgradeableBeacon(address(new MortarWallet()));
         _walletBeacon.transferOwnership((msg.sender));
         walletBeacon = address(_walletBeacon);
 
@@ -33,19 +36,25 @@ contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable {
         BeaconProxy proxy = new BeaconProxy(
             walletBeacon, 
             abi.encodeWithSelector(
-                MortarWallet(address(0)).__MortarGnosis_init.selector, _owners, _minApprovals)
+                MortarWallet(address(0)).__MortarWallet_init.selector, _owners, _minApprovals)
         );
+
+        emit WalletInit(_owners, _minApprovals, msg.sender);
 
         address walletProxy = address(proxy);
         uint256 walletCount = walletProxies.length;
         walletProxies.push(walletProxy);
 
-        emit WalletInit(walletProxy, walletCount, _msgSender());
+        for(uint256 i = 0; i <_owners.length; i++) {
+            address owner = _owners[i];
+            ownerWallets[owner].push(walletProxy);      
+        }
+
+        emit ProxyDeployed(walletProxy, walletCount);
      
         return walletProxy;
     }
 
-    
     function getWalletBeacon() external view virtual returns(address) {
         return walletBeacon;
     }
@@ -62,6 +71,10 @@ contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable {
         return walletProxies[id];
     }
 
+    function getOwnerWallets(address owner) external view returns(address[] memory) {
+        return ownerWallets[owner];
+    }
+
     function pause() public virtual onlyOwner {
         _pause();
     }
@@ -75,4 +88,3 @@ contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable {
     }
 
 }
-
