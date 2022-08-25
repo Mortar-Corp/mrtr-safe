@@ -1,7 +1,7 @@
 require("dotenv").config();
 require("@nomiclabs/hardhat-waffle");
 require("@openzeppelin/hardhat-upgrades");
-require("hardhat-gas-reporter");
+//require("hardhat-gas-reporter");
 
 
 module.exports = {
@@ -13,18 +13,18 @@ module.exports = {
       timeout: 20000,   
     },
   },
-  gasReporter: {
-    enabled: (process.env.COINMARKETCAP) ? true : false,
-    //token: "BRCK", //we need a Mrtr API to report correctly 
-    currency: "USD",  //I need coinMarketCap API to report in usd;
-    gasPrice: 200,    //our gasPrice?
-  },
+  // gasReporter: {
+  //   coinmarketcap: process.env.COINMARKETCAP,
+  //   //token: "BRCK", //we need a Mrtr API to report correctly 
+  //   currency: "USD",  //I need coinMarketCap API to report in usd;
+  //   gasPrice: 200,    //our gasPrice?
+  // },
 
   solidity: {
-    version: "0.8.10",
+    version: "0.8.7",
     optimizer: {
       enabled: true,
-      runs: 10000,
+      runs: 200,
     }
   }
 };
