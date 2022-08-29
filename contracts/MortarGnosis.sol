@@ -19,7 +19,7 @@ contract MortarGnosis is Initializable, Owners, ERC721HolderUpgradeable, ERC1155
     mapping(bytes32 => bool) private executed;
 
 
-    function __MortarWallet_init(address[] memory _owners, uint256 _minApprovals) public initializer {
+    function __MortarGnosis_init(address[] memory _owners, uint256 _minApprovals) public payable initializer {
         __Owners_init(_owners, _minApprovals);
         __ERC1155Holder_init();
         __ERC721Holder_init();

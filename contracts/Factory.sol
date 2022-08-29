@@ -25,18 +25,18 @@ contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable {
     event WalletInit(address[] owners, uint256 minApproval, address indexed sender);
 
     function __Factory_init() public virtual initializer {
-        UpgradeableBeacon _walletBeacon = new UpgradeableBeacon(address(new MortarWallet()));
+        UpgradeableBeacon _walletBeacon = new UpgradeableBeacon(address(new MortarGnosis()));
         _walletBeacon.transferOwnership((msg.sender));
         walletBeacon = address(_walletBeacon);
 
         emit FactoryInit(walletBeacon);
     }
 
-    function createWallet(address[] memory _owners, uint256 _minApprovals) public virtual whenNotPaused returns(address) {
+    function createWallet(address[] memory _owners, uint256 _minApprovals) public virtual payable whenNotPaused returns(address) {
         BeaconProxy proxy = new BeaconProxy(
             walletBeacon, 
             abi.encodeWithSelector(
-                MortarWallet(address(0)).__MortarWallet_init.selector, _owners, _minApprovals)
+                MortarGnosis(payable(address(0))).__MortarGnosis_init.selector, _owners, _minApprovals)
         );
 
         emit WalletInit(_owners, _minApprovals, msg.sender);
