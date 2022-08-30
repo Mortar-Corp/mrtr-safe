@@ -9,9 +9,11 @@ const { VALIDATOR_ADDRESS, VALIDATOR_PRIVATE_KEY } = process.env;
 module.exports = {
   solidity: {
     version: "0.8.7",
-    optimizer: {
-      enabled: true,
-      runs: 200,
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
     },
   },
   defaultNetwork: "mrtrTest",
