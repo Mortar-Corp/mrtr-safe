@@ -3,40 +3,37 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "./Access/OwnableUpgradeable.sol";
 import "./Proxy/Initializable.sol";
+import "./Security/PausableUpgradeable.sol";
 import "./Proxy/BeaconProxy.sol";
 import "./Proxy/UpgradeableBeacon.sol";
-import "./Security/PausableUpgradeable.sol";
-import "./MortarGnosis.sol";
+import "./MrtrSafe.sol";
+import "./Interfaces/IFactory.sol";
 
-/**
- *@title Factory
- *@author Sasha Flores
- *@notice initiates a new beacon proxy for each wallet
-*/
-contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable {
+
+contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable, IFactory {
 
     address private walletBeacon;
     address[] private walletProxies;
     mapping(address => address[]) internal ownerWallets;
    
 
-    event FactoryInit(address indexed walletBeacon);
-    event ProxyDeployed(address indexed walletProxy, uint256 count);
-    event WalletInit(address[] owners, uint256 minApproval, address indexed sender);
 
     function __Factory_init() public virtual initializer {
-        UpgradeableBeacon _walletBeacon = new UpgradeableBeacon(address(new MortarGnosis()));
+        __Ownable_init();
+        __Pausable_init();
+        
+        UpgradeableBeacon _walletBeacon = new UpgradeableBeacon(address(new MrtrSafe()));
         _walletBeacon.transferOwnership((msg.sender));
         walletBeacon = address(_walletBeacon);
 
         emit FactoryInit(walletBeacon);
     }
 
-    function createWallet(address[] memory _owners, uint256 _minApprovals) public virtual payable whenNotPaused returns(address) {
+    function createWallet(address[] memory _owners, uint256 _minApprovals) public virtual override whenNotPaused returns(address) {
         BeaconProxy proxy = new BeaconProxy(
             walletBeacon, 
             abi.encodeWithSelector(
-                MortarGnosis(payable(address(0))).__MortarGnosis_init.selector, _owners, _minApprovals)
+                MrtrSafe(payable(address(0))).__MrtrSafe_init.selector, _owners, _minApprovals)
         );
 
         emit WalletInit(_owners, _minApprovals, msg.sender);
@@ -55,35 +52,35 @@ contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable {
         return walletProxy;
     }
 
-    function getWalletBeacon() external view virtual returns(address) {
+    function getWalletBeacon() external view virtual override returns(address) {
         return walletBeacon;
     }
 
-    function allWallets() external view virtual returns(address[] memory) {
+    function allWallets() external view virtual override returns(address[] memory) {
         return walletProxies;
     }
 
-    function walletsCount() external view virtual returns(uint256) {
+    function walletsCount() external view virtual override returns(uint256) {
         return walletProxies.length;
     }
 
-    function walletAddress(uint256 id) external view virtual returns(address) {
+    function walletAddress(uint256 id) external view virtual override returns(address) {
         return walletProxies[id];
     }
 
-    function getOwnerWallets(address owner) external view returns(address[] memory) {
+    function getOwnerWallets(address owner) external view virtual override returns(address[] memory) {
         return ownerWallets[owner];
     }
 
-    function pause() public virtual onlyOwner {
+    function pause() public virtual override onlyOwner {
         _pause();
     }
 
-    function unpause() public virtual onlyOwner {
+    function unpause() public virtual override onlyOwner {
         _unpause();
     }
 
-    function isPaused() public view returns(bool) {
+    function isPaused() public view virtual override returns(bool) {
         return paused();
     }
 

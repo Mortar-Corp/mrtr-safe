@@ -15,11 +15,4 @@ interface IERC1155ReceiverUpgradeable is IERC165Upgradeable {
         bytes calldata data
     ) external returns (bytes4);
 
-    function onERC1155BatchReceived(
-        address operator,
-        address from,
-        uint256[] calldata ids,
-        uint256[] calldata values,
-        bytes calldata data
-    ) external returns (bytes4);
 }

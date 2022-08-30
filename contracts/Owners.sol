@@ -12,12 +12,13 @@ import "./Utils/ContextUpgradeable.sol";
  */
 abstract contract Owners is Initializable, ContextUpgradeable {
 
+
     uint256 internal ownersCount;
     uint256 internal minApproval;
     address[] internal owners;
     mapping(address => bool) private isOwner;
 
-    event OwnersInit(address[] owners, uint256 minApproval, uint256 ownersCount);
+    
     event OwnerAdded(address newOwner);
     event OwnerRemoved(address removedOwner);
     event ApprovalsChanged(uint256 minApproval);
@@ -58,7 +59,6 @@ abstract contract Owners is Initializable, ContextUpgradeable {
 
         minApproval = _minApproval;
         ownersCount = owners.length;
-        emit OwnersInit(_owners, _minApproval, ownersCount);
     }
 
     //@dev returns owners' addresses
@@ -106,6 +106,7 @@ abstract contract Owners is Initializable, ContextUpgradeable {
      * `_minApproval` is at least one, & equal to, or less than `ownersCount`
      */
     function removeOwner(address owner, uint256 _minApproval) public virtual onlyOwners() {
+        require(isOwner[owner] == true && owner != address(0), "Owners: owner  does not exist or zero address");
         uint256 newCount = ownersCount - 1;
         if(_minApproval <= newCount) {
             owner = owners[newCount];

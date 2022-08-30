@@ -25,7 +25,7 @@ abstract contract PausableUpgradeable is Initializable, ContextUpgradeable {
     }
 
 
-    function paused() public view virtual returns (bool) {
+    function paused() internal view virtual returns (bool) {
         return _paused;
     }
 
