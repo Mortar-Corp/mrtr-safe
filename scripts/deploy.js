@@ -1,18 +1,25 @@
 const { ethers, upgrades } = require("hardhat");
 
 async function main() {
+  // get Factories
   const Factory = await ethers.getContractFactory("Factory");
-  const factory = await Factory.deploy();
+  const Safe = await ethers.getContractFactory("MortarGnosis");
 
-  await factory.deployed();
+  // first deploy wallet Upgradable beacon
+  const beaconSafe = await upgrades.deployBeacon(Safe);
+  await beaconSafe.deployed();
+  console.log("Wallet Beacon deployed to:", beaconSafe.address);
 
-  console.log("factory: ", factory);
+  // then deploy factory
+  const factoryContract = await upgrades.deployProxy(Factory, [
+    beaconSafe.address,
+  ]);
+  await factoryContract.deployed();
+  console.log("Factory deployed to: ", factoryContract.address);
 
-  // first deploy Factory upgradable beacon
-  // const Factory = await ethers.getContractFactory("Factory");
-  // const beaconFactory = await upgrades.deployBeacon(Factory);
-  // await beaconFactory.deployed();
-  // console.log("beaconFactory deets:", beaconFactory);
+  // then create factory
+  // const [walletProxy] = await Promise.all([factoryContract.createWallet()]);
+  // factoryContract.
 }
 
 main().catch((error) => {

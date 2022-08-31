@@ -1,0 +1,588 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x18193Ce3B98132b7E8CC5F1BeC10B516BBA54783",
+    "txHash": "0x5058da6307fe3083d2d119ad147edc242ee4e6e0309ac95e3f50ac79ddb7cfc5"
+  },
+  "proxies": [
+    {
+      "address": "0x68FB5873C88a0ceBd5E2B6112Cc91315094E5327",
+      "txHash": "0xbee5213c87407a4c952f0b2d42ce7e6160d3d64b8ef1b8bc24f98bb62301a177",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "e5b193189378af1ded9c952d2d274dce18e716b0affabe773d3a31be2a1c662b": {
+      "address": "0x42195a3bb907DE2dc0ff01da07ae539B5207E413",
+      "txHash": "0x815fb076ef55599e30e0272aa52a6487c9f165450d4edb84365e85b3bacd55be",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "contracts/Proxy/Initializable.sol:11",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "contracts/Proxy/Initializable.sol:16"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "contracts/Utils/ContextUpgradeable.sol:22"
+          },
+          {
+            "label": "ownersCount",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_uint256",
+            "contract": "Owners",
+            "src": "contracts/Owners.sol:15"
+          },
+          {
+            "label": "minApproval",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_uint256",
+            "contract": "Owners",
+            "src": "contracts/Owners.sol:16"
+          },
+          {
+            "label": "owners",
+            "offset": 0,
+            "slot": "53",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "Owners",
+            "src": "contracts/Owners.sol:17"
+          },
+          {
+            "label": "isOwner",
+            "offset": 0,
+            "slot": "54",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "Owners",
+            "src": "contracts/Owners.sol:18"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "55",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC721HolderUpgradeable",
+            "src": "contracts/Token/ERC721HolderUpgradeable.sol:26"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "contracts/Utils/ERC165Upgradeable.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1155ReceiverUpgradeable",
+            "src": "contracts/Token/ERC1155ReceiverUpgradeable.sol:23"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1155HolderUpgradeable",
+            "src": "contracts/Token/ERC1155HolderUpgradeable.sol:36"
+          },
+          {
+            "label": "balance",
+            "offset": 0,
+            "slot": "255",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "MortarGnosis",
+            "src": "contracts/MortarGnosis.sol:17"
+          },
+          {
+            "label": "nonces",
+            "offset": 0,
+            "slot": "256",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "MortarGnosis",
+            "src": "contracts/MortarGnosis.sol:18"
+          },
+          {
+            "label": "executed",
+            "offset": 0,
+            "slot": "257",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "contract": "MortarGnosis",
+            "src": "contracts/MortarGnosis.sol:19"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_bool)": {
+            "label": "mapping(bytes32 => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "7d594aa5e6d353c716562fc52365da97936a446218876c6193e56ebd48bfa7e0": {
+      "address": "0xe1f3e1fD717B6Dc0B2e4f50A41241B1a09c38fb3",
+      "txHash": "0xd3801ecc78fe1fa62679615c11e7d3f25aafa08e8e0957381888aab6a059bc9f",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "contracts/Proxy/Initializable.sol:11",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "contracts/Proxy/Initializable.sol:16"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "contracts/Utils/ContextUpgradeable.sol:22"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "contracts/Access/OwnableUpgradeable.sol:10"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "contracts/Access/OwnableUpgradeable.sol:51"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "contracts/Security/PausableUpgradeable.sol:17"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "contracts/Security/PausableUpgradeable.sol:56"
+          },
+          {
+            "label": "walletBeacon",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "Factory",
+            "src": "contracts/Factory.sol:18"
+          },
+          {
+            "label": "walletProxies",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "Factory",
+            "src": "contracts/Factory.sol:19"
+          },
+          {
+            "label": "ownerWallets",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "contract": "Factory",
+            "src": "contracts/Factory.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "0881ae39c8dc65a3afe70503bcd4604941aadd12ff1d03a27974c01f4d772077": {
+      "address": "0xC4aDf19919b64Dd41BBf468a7e024586FDe180EE",
+      "txHash": "0x4d702da700b14fad57b4db536f40dad54c2ec98583db7b749b66fbf53c04bdec",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "contracts/Proxy/Initializable.sol:11",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "contracts/Proxy/Initializable.sol:16"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "contracts/Utils/ContextUpgradeable.sol:22"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "contracts/Access/OwnableUpgradeable.sol:10"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "contracts/Access/OwnableUpgradeable.sol:51"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "contracts/Security/PausableUpgradeable.sol:17"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "contracts/Security/PausableUpgradeable.sol:56"
+          },
+          {
+            "label": "walletBeacon",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "Factory",
+            "src": "contracts/Factory.sol:18"
+          },
+          {
+            "label": "walletProxies",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "Factory",
+            "src": "contracts/Factory.sol:19"
+          },
+          {
+            "label": "ownerWallets",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "contract": "Factory",
+            "src": "contracts/Factory.sol:20"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "884ba8a0c3003094ef523763d6913a8ac1a9f8be5495b752fa7009dbc944e5b0": {
+      "address": "0x87C086eE5B9B77880eBa0bedBFc7666881478889",
+      "txHash": "0xe4f73bd36953ca15ea13f91ed6eed02c581b0fba416563fd1993e136542ab20f",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "contracts/Proxy/Initializable.sol:11",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "contracts/Proxy/Initializable.sol:16"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "contracts/Utils/ContextUpgradeable.sol:22"
+          },
+          {
+            "label": "ownersCount",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_uint256",
+            "contract": "Owners",
+            "src": "contracts/Owners.sol:15"
+          },
+          {
+            "label": "minApproval",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_uint256",
+            "contract": "Owners",
+            "src": "contracts/Owners.sol:16"
+          },
+          {
+            "label": "owners",
+            "offset": 0,
+            "slot": "53",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "Owners",
+            "src": "contracts/Owners.sol:17"
+          },
+          {
+            "label": "isOwner",
+            "offset": 0,
+            "slot": "54",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "Owners",
+            "src": "contracts/Owners.sol:18"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "55",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC721HolderUpgradeable",
+            "src": "contracts/Token/ERC721HolderUpgradeable.sol:26"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC165Upgradeable",
+            "src": "contracts/Utils/ERC165Upgradeable.sol:21"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1155ReceiverUpgradeable",
+            "src": "contracts/Token/ERC1155ReceiverUpgradeable.sol:23"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "205",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1155HolderUpgradeable",
+            "src": "contracts/Token/ERC1155HolderUpgradeable.sol:36"
+          },
+          {
+            "label": "balance",
+            "offset": 0,
+            "slot": "255",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "MortarGnosis",
+            "src": "contracts/MortarGnosis.sol:17"
+          },
+          {
+            "label": "nonces",
+            "offset": 0,
+            "slot": "256",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "MortarGnosis",
+            "src": "contracts/MortarGnosis.sol:18"
+          },
+          {
+            "label": "executed",
+            "offset": 0,
+            "slot": "257",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "contract": "MortarGnosis",
+            "src": "contracts/MortarGnosis.sol:19"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_bool)": {
+            "label": "mapping(bytes32 => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}

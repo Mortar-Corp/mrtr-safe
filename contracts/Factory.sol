@@ -24,12 +24,21 @@ contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable {
     event ProxyDeployed(address indexed walletProxy, uint256 count);
     event WalletInit(address[] owners, uint256 minApproval, address indexed sender);
 
-    function __Factory_init() public virtual initializer {
-        UpgradeableBeacon _walletBeacon = new UpgradeableBeacon(address(new MortarGnosis()));
-        _walletBeacon.transferOwnership((msg.sender));
-        walletBeacon = address(_walletBeacon);
+    // function __Factory_init() public virtual initializer {
+    //     // UpgradeableBeacon _walletBeacon = new UpgradeableBeacon(address(new MortarGnosis()));
+    //     // _walletBeacon.transferOwnership((msg.sender));
+    //     // walletBeacon = address(_walletBeacon);
 
-        emit FactoryInit(walletBeacon);
+    //     // emit FactoryInit(walletBeacon);
+    // }
+
+      function initialize(address walletBeacon_) public initializer {
+        // __Ownable_init_unchained();
+
+        walletBeacon = walletBeacon_;
+
+        // start creator count at 1
+        // creatorId.increment();
     }
 
     function createWallet(address[] memory _owners, uint256 _minApprovals) public virtual payable whenNotPaused returns(address) {

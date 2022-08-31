@@ -54,9 +54,9 @@ contract MortarGnosis is Initializable, Owners, ERC721HolderUpgradeable, ERC1155
         return address(this).balance;
     }
 
-    function ownerBrickBalance(address owner) public view returns(uint256) {
-        return balance[owner];
-    }
+    // function ownerBrickBalance(address owner) public view returns(uint256) {
+    //     return balance[owner];
+    // }
 
     function transferBrick(address to, uint256 amount, bytes[] memory sigs) public virtual onlyOwners() { 
         require(balance[to] >= amount || balance[address(this)] >= amount, "exceeds balance");
