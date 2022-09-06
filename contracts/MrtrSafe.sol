@@ -19,7 +19,6 @@ contract MrtrSafe is
 {
    
 
-
     IERC1155Modified private VCT;
     uint256 private nonce;
     mapping(bytes32 => bool) private executed;
@@ -58,8 +57,14 @@ contract MrtrSafe is
     }
 
     function hashWithdraw(string memory symbol, uint256 amount, uint256 _nonce) public view returns(bytes32) {
-        bytes32 structHash = keccak256(abi.encode(WITHDRAW_TYPEHASH, symbol, amount, _nonce));
-        return _hashTypedDataV4(structHash);
+        //bytes32 structHash = keccak256(abi.encode(WITHDRAW_TYPEHASH, keccak256(bytes(symbol)), amount, _nonce));
+        return _hashTypedDataV4(keccak256(abi.encode(
+            WITHDRAW_TYPEHASH,
+            keccak256(bytes(symbol)),
+            keccak256(abi.encodePacked(amount)),
+            keccak256(abi.encodePacked(_nonce))
+            )
+        ));
     }
 
     function verifySiganture(bytes32 hash, bytes[] memory signatures) public view returns(bool) {
