@@ -16,10 +16,6 @@ async function main() {
   ]);
   await factoryContract.deployed();
   console.log("Factory deployed to: ", factoryContract.address);
-
-  // then create factory
-  // const [walletProxy] = await Promise.all([factoryContract.createWallet()]);
-  // factoryContract.
 }
 
 main().catch((error) => {

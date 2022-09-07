@@ -9,3 +9,5 @@ npm i
 ## Wallet
 
 npx hardhat run scripts/deploy.js --network mrtrTest
+
+npx hardhat run scripts/create-wallet.js
