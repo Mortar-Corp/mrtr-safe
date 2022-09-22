@@ -1,0 +1,40 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ReceiveBrick",
+  "sourceName": "contracts/ReceiveBrick.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "balance",
+          "type": "uint256"
+        }
+      ],
+      "name": "FundsReceived",
+      "type": "event"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b50607f8061001e6000396000f3fe6080604052366044576040805134815247602082015233917f363f315f930a17d1266b86a20d6dd34b1cfbc5a9db9f13a65d06a689c3a2af8a910160405180910390a2005b600080fdfea2646970667358221220a3aa2348f3fd57ab4861602029434213155494dd8e811156ab9603114c26e7ad64736f6c63430008070033",
+  "deployedBytecode": "0x6080604052366044576040805134815247602082015233917f363f315f930a17d1266b86a20d6dd34b1cfbc5a9db9f13a65d06a689c3a2af8a910160405180910390a2005b600080fdfea2646970667358221220a3aa2348f3fd57ab4861602029434213155494dd8e811156ab9603114c26e7ad64736f6c63430008070033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

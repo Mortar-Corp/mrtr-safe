@@ -22,7 +22,7 @@ contract MrtrSafe is
 
     IERC1155Modified private VCT;
     IERC20Upgradeable private AND;
-    //IERC721Upgradeable private EstateToken;
+    IERC721Upgradeable private EstateToken;
 
     uint256 private nonce;
     mapping(bytes32 => bool) private executed;
@@ -38,6 +38,7 @@ contract MrtrSafe is
         VCT = IERC1155Modified(0x0C12780426024405E90b9b40DEE4B8F99B2E3Da5);
         //this is the stable coin address which doesn't exist yet
         AND = IERC20Upgradeable(0x50Dd14Aa06f0032993E6a96fB314596BeccD25c4);
+        EstateToken = IERC721Upgradeable(0xBF54796c09eD3F0F9A816bf61F19620ECC99Fbc4);
     }
 
 
@@ -56,12 +57,12 @@ contract MrtrSafe is
         return address(this);
     }
 
-    function EstateTokenBalance(address contractAddress, address owner) public view returns(uint256) {
-        return IERC721Upgradeable(contractAddress).balanceOf(owner);
+    function EstateTokenBalance(address owner) public view returns(uint256) {
+        return EstateToken.balanceOf(owner);
     }
 
-    function transferEstateToken(address contractAddress, uint256 tokenId, address to) public {
-        IERC721Upgradeable(contractAddress).transferToken(address(this), tokenId, to);
+    function transferEstateToken(uint256 tokenId, address to) public {
+        EstateToken.transferToken(address(this), tokenId, to);
     }
 
 

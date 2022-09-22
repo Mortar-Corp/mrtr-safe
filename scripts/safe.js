@@ -1,35 +1,16 @@
-const {  ethers } = require("hardhat");
-
-async function attach(name, address) {
-    const Factory = await ethers.getContractFactory(name);
-    return Factory.attach(address);
-}
+const { ethers } = require("hardhat");
+const { Signer } = require("ethers");
 
 async function main() {
-    const [owners, manager] = await ethers.getSigners();
 
-    const registry = (await attach("MrtrSafe")).connect(owners);
-    const { chainId } = await ethers.provider.getNetwork();
-    const symbol = AND || BRCK;
-    const signatures = await owners._signTypedData(
+    const [deployer, owners] = await ethers.getSigners();
+    console.log("Deploying Account:", await deployer.getAddress());
 
-        {
-            name: "Name",
-            version: "1.0.0",
-            chainId,
-            verifyingContract: registry.address,
-        },
-        {
-            Withdraw: [
-                {name: "symbol", type: "string"},
-                {name: "amount", type: "uint256"},
-                {name: "nonce", type: "uint256"},
-            ],
-        },
 
-        {symbol, amount, nonce},
-    );
-    console.log({ registry: registry.address, symbol, amount});
+    const Safe = await ethers.getContractFactory("MrtrSafe");
+    const safe = await Safe.deploy();
+    await safe.deployed();
+    console.log("contract deployed to:", safe.address);
 }
 main()
   .then(() => process.exit(0))
