@@ -7,20 +7,26 @@ import "./Proxy/Initializable.sol";
 import "./Interfaces/IERC1155Modified.sol";
 import "./Token/ERC1155HolderModified.sol";
 import "./Interfaces/IERC20Upgradeable.sol";
+import "./Interfaces/IERC721Upgradeable.sol";
+import "./ERC721HolderUpgradeable.sol";
 
 
 contract MrtrSafe is 
     Initializable,
     Owners, 
     ERC1155HolderModified, 
+    ERC721HolderUpgradeable,
     ReceiveBrick
 {
    
 
     IERC1155Modified private VCT;
     IERC20Upgradeable private AND;
+    //IERC721Upgradeable private EstateToken;
+
     uint256 private nonce;
     mapping(bytes32 => bool) private executed;
+    mapping(address => address[]) internal ownerWallets;
 
 
   
@@ -46,9 +52,21 @@ contract MrtrSafe is
         return address(this).balance;
     }
 
+    function walletAddress() public view returns(address) {
+        return address(this);
+    }
+
+    function EstateTokenBalance(address contractAddress, address owner) public view returns(uint256) {
+        return IERC721Upgradeable(contractAddress).balanceOf(owner);
+    }
+
+    function transferEstateToken(address contractAddress, uint256 tokenId, address to) public {
+        IERC721Upgradeable(contractAddress).transferToken(address(this), tokenId, to);
+    }
+
 
     function transfer(address payable receiver, string calldata symbol, uint256 id, uint256 amount) public virtual onlyOwners {
-    
+        require(receiver != address(0) && receiver != address(this), "safe: non zero address & out of the safe only");
         if(keccak256(bytes(symbol)) == keccak256(bytes("BRCK"))) {
             require(address(this).balance >= amount, "Safe: exceeds available Brick's balance");
             (bool success, ) = receiver.call{value: amount}("");
@@ -59,6 +77,8 @@ contract MrtrSafe is
         } else if(keccak256(bytes(symbol)) == keccak256(bytes("VCT"))) {
             require(VCT.balanceOf(address(this), id) >= amount, "Safe: exceeds available VCT's balance");
             VCT.safeTransferFrom(address(this), receiver, id, amount, "");
+        } else {
+            revert("Safe: token do not exist or estate token");
         }
         
     }
