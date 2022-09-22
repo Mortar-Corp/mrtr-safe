@@ -26,10 +26,10 @@ contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable, IFac
         _walletBeacon.transferOwnership((msg.sender));
         walletBeacon = address(_walletBeacon);
 
-        emit FactoryInit(walletBeacon);
+        emit FactoryInit(walletBeacon, msg.sender);
     }
 
-    function createWallet(address[] memory _owners, uint256 _minApprovals) public virtual override whenNotPaused returns(address) {
+    function createWallet(address[] calldata _owners, uint256 _minApprovals) public virtual override whenNotPaused returns(address) {
         BeaconProxy proxy = new BeaconProxy(
             walletBeacon, 
             abi.encodeWithSelector(
