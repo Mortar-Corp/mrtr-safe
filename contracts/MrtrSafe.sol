@@ -38,7 +38,7 @@ contract MrtrSafe is
         VCT = IERC1155Modified(0x0C12780426024405E90b9b40DEE4B8F99B2E3Da5);
         //this is the stable coin address which doesn't exist yet
         AND = IERC20Upgradeable(0x50Dd14Aa06f0032993E6a96fB314596BeccD25c4);
-        EstateToken = IERC721Upgradeable(0xBF54796c09eD3F0F9A816bf61F19620ECC99Fbc4);
+        EstateToken = IERC721Upgradeable(0x6A5999b4f28b219EBA7fbC1Be165234405925Dd4);
     }
 
 
