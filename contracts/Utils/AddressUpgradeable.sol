@@ -1,18 +1,10 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.5.0) (utils/Address.sol)
-
 pragma solidity ^0.8.1;
 
-/**
- * @dev Collection of functions related to the address type
- */
+
 library AddressUpgradeable {
 
     function isContract(address account) internal view returns (bool) {
-        // This method relies on extcodesize/address.code.length, which returns 0
-        // for contracts in construction, since the code is only stored at the end
-        // of the constructor execution.
-
         return account.code.length > 0;
     }
 

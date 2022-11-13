@@ -1,16 +1,9 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.5.0) (utils/cryptography/ECDSA.sol)
-
 pragma solidity ^0.8.0;
 
-import "../Utils/StringsUpgradeable.sol";
+import "../utils/StringsUpgradeable.sol";
 
-/**
- * @dev Elliptic Curve Digital Signature Algorithm (ECDSA) operations.
- *
- * These functions can be used to verify that a message was signed by the holder
- * of the private keys of a given address.
- */
+
 library ECDSAUpgradeable {
     enum RecoverError {
         NoError,

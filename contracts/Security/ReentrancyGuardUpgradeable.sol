@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: MIT
-
-
 pragma solidity ^0.8.0;
-import "../Proxy/Initializable.sol";
 
+import "../proxy/Initializable.sol";
 
 abstract contract ReentrancyGuardUpgradeable is Initializable {
 

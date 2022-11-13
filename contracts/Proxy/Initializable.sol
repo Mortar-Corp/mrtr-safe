@@ -1,29 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.2;
 
-import "../Utils/AddressUpgradeable.sol";
+import "../utils/AddressUpgradeable.sol";
 
 abstract contract Initializable {
-    /**
-     * @dev Indicates that the contract has been initialized.
-     * @custom:oz-retyped-from bool
-     */
+
     uint8 private _initialized;
 
-    /**
-     * @dev Indicates that the contract is in the process of being initialized.
-     */
     bool private _initializing;
 
-    /**
-     * @dev Triggered when the contract has been initialized or reinitialized.
-     */
     event Initialized(uint8 version);
 
-    /**
-     * @dev A modifier that defines a protected initializer function that can be invoked at most once. In its scope,
-     * `onlyInitializing` functions can be used to initialize parent contracts. Equivalent to `reinitializer(1)`.
-     */
     modifier initializer() {
         bool isTopLevelCall = _setInitializedVersion(1);
         if (isTopLevelCall) {
@@ -48,21 +35,13 @@ abstract contract Initializable {
         }
     }
 
-    /**
-     * @dev Modifier to protect an initialization function so that it can only be invoked by functions with the
-     * {initializer} and {reinitializer} modifiers, directly or indirectly.
-     */
+
     modifier onlyInitializing() {
         require(_initializing, "Initializable: contract is not initializing");
         _;
     }
 
-    /**
-     * @dev Locks the contract, preventing any future reinitialization. This cannot be part of an initializer call.
-     * Calling this in the constructor of a contract will prevent that contract from being initialized or reinitialized
-     * to any version. It is recommended to use this to lock implementation contracts that are designed to be called
-     * through proxies.
-     */
+
     function _disableInitializers() internal virtual {
         _setInitializedVersion(type(uint8).max);
     }

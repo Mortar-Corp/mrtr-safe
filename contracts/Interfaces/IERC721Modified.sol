@@ -1,12 +1,9 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.6.0) (token/ERC721/IERC721.sol)
-
 pragma solidity ^0.8.0;
 
-import "../Interfaces/IERC165Upgradeable.sol";
+import "../interfaces/IERC165Upgradeable.sol";
 
-
-interface IERC721Upgradeable is IERC165Upgradeable {
+interface IERC721Modified is IERC165Upgradeable {
 
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 
@@ -14,9 +11,32 @@ interface IERC721Upgradeable is IERC165Upgradeable {
 
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
 
+    function __Estate_init(address safeAddress, address owner, uint256 taxId) external payable;
+
+    function tokenMetadata(uint256 tokenId) external view returns(string memory, string memory, string memory);
+
     function balanceOf(address owner) external view returns (uint256 balance);
 
     function ownerOf(uint256 tokenId) external view returns (address owner);
+
+    function mintEstateToken
+    (
+        string memory state, 
+        string memory city, 
+        uint256 zipcode,
+        string memory tokenName, 
+        string memory tokenSymbol, 
+        string memory tokenURI
+    ) external returns(uint256);
+
+    function version() external pure returns(string memory);
+    
+    function totalSupply() external view returns(uint256);
+
+    function estateLocation(uint256 tokenId) external view returns(string memory, string memory, uint256);
+
+
+    function burn(uint256 tokenId) external;
 
     function safeTransferFrom(
         address from,
@@ -31,13 +51,11 @@ interface IERC721Upgradeable is IERC165Upgradeable {
         uint256 tokenId
     ) external;
 
-
     function transferFrom(
         address from,
         address to,
         uint256 tokenId
     ) external;
-
 
     function approve(address to, uint256 tokenId) external;
 

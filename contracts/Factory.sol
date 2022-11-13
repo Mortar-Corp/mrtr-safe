@@ -1,20 +1,21 @@
 //SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.0 <0.9.0;
 
-import "./Access/OwnableUpgradeable.sol";
-import "./Proxy/Initializable.sol";
-import "./Security/PausableUpgradeable.sol";
-import "./Proxy/BeaconProxy.sol";
-import "./Proxy/UpgradeableBeacon.sol";
+import "./access/OwnableUpgradeable.sol";
+import "./proxy/Initializable.sol";
+import "./security/PausableUpgradeable.sol";
+import "./proxy/BeaconProxy.sol";
+import "./proxy/UpgradeableBeacon.sol";
 import "./MrtrSafe.sol";
-import "./Interfaces/IFactory.sol";
+import "./interfaces/IFactory.sol";
 
 
 contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable, IFactory {
 
-    address private walletBeacon;
-    address[] private walletProxies;
-    mapping(address => address[]) internal ownerWallets;
+    address private safeBeacon;
+    address[] private safeProxies;
+    mapping(address => address[]) private ownerSafes;
+    mapping(address => address[]) private managers;
    
 
 
@@ -22,54 +23,83 @@ contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable, IFac
         __Ownable_init();
         __Pausable_init();
         
-        UpgradeableBeacon _walletBeacon = new UpgradeableBeacon(address(new MrtrSafe()));
-        _walletBeacon.transferOwnership((msg.sender));
-        walletBeacon = address(_walletBeacon);
+        UpgradeableBeacon _safeBeacon = new UpgradeableBeacon(address(new MrtrSafe()));
+        _safeBeacon.transferOwnership((msg.sender));
+        safeBeacon = address(_safeBeacon);
 
-        emit FactoryInit(walletBeacon, msg.sender);
+        emit FactoryInit(safeBeacon, msg.sender);
     }
 
-    function createWallet(address[] calldata _owners, uint256 _minApprovals) public virtual override whenNotPaused returns(address) {
+    function createSafe(address[] calldata _owners, uint256 _minApprovals) public virtual override whenNotPaused returns(address) {
         BeaconProxy proxy = new BeaconProxy(
-            walletBeacon, 
+            safeBeacon, 
             abi.encodeWithSelector(
                 MrtrSafe(payable(address(0))).__MrtrSafe_init.selector, _owners, _minApprovals)
         );
 
-        emit WalletInit(_owners, _minApprovals, msg.sender);
 
-        address walletProxy = address(proxy);
-        uint256 walletCount = walletProxies.length;
-        walletProxies.push(walletProxy);
+        address safeProxy = address(proxy);
+        uint256 safeCount = safeProxies.length;
+        safeProxies.push(safeProxy);
 
         for(uint256 i = 0; i <_owners.length; i++) {
             address owner = _owners[i];
-            ownerWallets[owner].push(walletProxy);      
+            ownerSafes[owner].push(safeProxy);      
         }
 
-        emit ProxyDeployed(walletProxy, walletCount);
+        emit ProxyDeployed(safeProxy, safeCount);
+        emit SafeInit(_owners, _minApprovals, msg.sender);
      
-        return walletProxy;
+        return safeProxy;
     }
 
-    function getWalletBeacon() external view virtual override returns(address) {
-        return walletBeacon;
+    function getSafeBeacon() external view virtual override returns(address) {
+        return safeBeacon;
     }
 
-    function allWallets() external view virtual override returns(address[] memory) {
-        return walletProxies;
+    function setManager(address safe, address manager) public virtual override onlyOwner whenNotPaused returns(bool) {
+        require(manager != address(0), "Factory: non zero address only");
+        (bool success, ) = 
+        safe.call(abi.encodeWithSignature("setManager(address)", manager));
+        require(success, "Factory: assign manager failed");
+        managers[manager].push(safe);
+        return success;
     }
 
-    function walletsCount() external view virtual override returns(uint256) {
-        return walletProxies.length;
+    function managerSafes(address manager) external view virtual override returns(address[] memory) {
+        return managers[manager];
     }
 
-    function walletAddress(uint256 id) external view virtual override returns(address) {
-        return walletProxies[id];
+    function managerSafesCount(address manager) external view virtual override returns(uint256) {
+        return managers[manager].length;
     }
 
-    function getOwnerWallets(address owner) external view virtual override returns(address[] memory) {
-        return ownerWallets[owner];
+    function managerSafeId(address manager, uint256 id) external view virtual override returns(address) {
+        return managers[manager][id];
+    }
+
+    function allSafes() external view virtual override returns(address[] memory) {
+        return safeProxies;
+    }
+
+    function safesCount() external view virtual override returns(uint256) {
+        return safeProxies.length;
+    }
+
+    function safeAddress(uint256 id) external view virtual override returns(address) {
+        return safeProxies[id];
+    }
+
+    function getOwnerSafes(address owner) external view virtual override returns(address[] memory) {
+        return ownerSafes[owner];
+    }
+
+    function ownerSafesCount(address owner) external view virtual override returns(uint256) {
+        return ownerSafes[owner].length;
+    }
+
+    function ownerSafeId(address owner, uint256 id) external view virtual override returns(address) {
+        return ownerSafes[owner][id];
     }
 
     function pause() public virtual override onlyOwner {

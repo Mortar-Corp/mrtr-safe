@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.0;
 
-import "../Utils/ContextUpgradeable.sol";
-import "../Proxy/Initializable.sol";
+import "../utils/ContextUpgradeable.sol";
+import "../proxy/Initializable.sol";
 
 
 abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
@@ -24,12 +23,10 @@ abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
         return _owner;
     }
 
-
     modifier onlyOwner() {
         require(owner() == _msgSender(), "Ownable: caller is not the owner");
         _;
     }
-
 
     function renounceOwnership() public virtual onlyOwner {
         _transferOwnership(address(0));
@@ -40,7 +37,6 @@ abstract contract OwnableUpgradeable is Initializable, ContextUpgradeable {
         require(newOwner != address(0), "Ownable: new owner is the zero address");
         _transferOwnership(newOwner);
     }
-
 
     function _transferOwnership(address newOwner) internal virtual {
         address oldOwner = _owner;

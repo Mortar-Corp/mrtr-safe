@@ -1,8 +1,8 @@
 //SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.0 <0.9.0;
 
-import "./Proxy/Initializable.sol";
-import "./Utils/ContextUpgradeable.sol";
+import "./proxy/Initializable.sol";
+import "./utils/ContextUpgradeable.sol";
 
 /** 
  *@title Owners

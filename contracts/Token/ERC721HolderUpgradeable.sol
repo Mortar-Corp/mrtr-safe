@@ -1,10 +1,9 @@
-// SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (token/ERC721/utils/ERC721Holder.sol)
+//SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
 
-import "../Interfaces/IERC721ReceiverUpgradeable.sol";
-import "../Proxy/Initializable.sol";
+import "../interfaces/IERC721ReceiverUpgradeable.sol";
+import "../proxy/Initializable.sol";
 
 
 contract ERC721HolderUpgradeable is Initializable, IERC721ReceiverUpgradeable {
@@ -22,6 +21,4 @@ contract ERC721HolderUpgradeable is Initializable, IERC721ReceiverUpgradeable {
     ) public virtual override returns (bytes4) {
         return this.onERC721Received.selector;
     }
-
-    uint256[50] private __gap;
 }

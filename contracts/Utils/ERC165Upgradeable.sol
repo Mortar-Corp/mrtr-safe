@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (utils/introspection/ERC165.sol)
-
 pragma solidity ^0.8.0;
 
-import "../Interfaces/IERC165Upgradeable.sol";
-import "../Proxy/Initializable.sol";
+import "../interfaces/IERC165Upgradeable.sol";
+import "../proxy/Initializable.sol";
 
 
 abstract contract ERC165Upgradeable is Initializable, IERC165Upgradeable {

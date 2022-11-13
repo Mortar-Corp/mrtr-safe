@@ -3,105 +3,113 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "./ReceiveBrick.sol";
 import "./Owners.sol";
-import "./Proxy/Initializable.sol";
-import "./Cryptography/ECDSAUpgradeable.sol";
-import "./Cryptography/draft-EIP712Upgradeable.sol";
-import "./Interfaces/IERC1155Modified.sol";
-import "./Token/ERC1155HolderModified.sol";
-import "./Interfaces/IERC20Upgradeable.sol";
+import "./proxy/Initializable.sol";
+import "./interfaces/IERC1155Modified.sol";
+import "./token/ERC1155HolderModified.sol";
+import "./interfaces/IERC20Upgradeable.sol";
+import "./interfaces/IERC721Modified.sol";
+import "./token/ERC721HolderUpgradeable.sol";
+import "./interfaces/IFactory.sol";
+
 
 
 contract MrtrSafe is 
     Initializable,
     Owners, 
+    ReceiveBrick,
     ERC1155HolderModified, 
-    EIP712Upgradeable, 
-    ReceiveBrick
+    ERC721HolderUpgradeable
+    
 {
    
-
+    // contracts storage
     IERC1155Modified private VCT;
     IERC20Upgradeable private AND;
+    IERC721Modified private EstateToken;
+    IFactory private factory;
+
+    address public manager;
+
     uint256 private nonce;
     mapping(bytes32 => bool) private executed;
 
 
-    bytes32 private constant TRANSFER_TYPEHASH = keccak256("Transfer(address reciever,string symbol,uint256 id,uint256 amount,uint256 nonce");
-
+  
     function __MrtrSafe_init(address[] memory _owners, uint256 _minApprovals) public payable initializer {
         __Owners_init(_owners, _minApprovals);
-        __EIP712_init("MrtrSafe", "1.0.0");
         __ERC1155HolderModified_init();
+        __ERC721Holder_init();
 
-        VCT = IERC1155Modified(0xC265Ee3c7173818dad8e212197044Eb3b23b55C9);
-        AND = IERC20Upgradeable(0x50Dd14Aa06f0032993E6a96fB314596BeccD25c4);
+        factory = IFactory(msg.sender);
+        require(msg.sender != address(0), "Safe: address zer sender");
+
+        VCT = IERC1155Modified(0x5e17b14ADd6c386305A32928F985b29bbA34Eff5);
+        AND = IERC20Upgradeable(0xd9145CCE52D386f254917e481eB44e9943F39138);
     }
 
 
-    function VCTExist(uint256 id) public view returns(uint256) {
-        return VCT.balanceOf(address(this), id);
+
+    function approve(address spender, uint256 amount) public returns(bool) {
+        return AND.approve(spender, amount);
+    }
+
+    //checks if VCT exists in safe if it's minted to safe not to address
+    function isVerified(address holder) public view returns(bool) {
+        return VCT.isVerified(holder);
+    }
+
+    function VctId(address holder) public view returns(uint256) {
+        return VCT.authToken(holder);
     }
 
 
-    //BRCK balance 
+    //checks BRCK balance per safe not per address
     function BRCKBalance() public view virtual returns(uint256) {
         return address(this).balance;
     }
 
-    function transfer(address payable receiver, string calldata symbol, uint256 id, uint256 amount, bytes[] calldata signatures) public virtual onlyOwners {
-        
-        require(verifySiganture(transferHash(receiver, symbol, id, amount, nonce), signatures), "Safe: invalid siganture");
 
+    function EstateTokenBalance(address contractAddress, address holder) public view returns(uint256) {
+        return IERC721Modified(contractAddress).balanceOf(holder);
+    }
+
+    function transferEstateToken(address contractAddress, address to, uint256 tokenId) public {
+        _whenNotPaused();
+        IERC721Modified(contractAddress).safeTransferFrom(address(this), to, tokenId);
+    }
+
+    function Transferfractions(address vault, address to, uint256 amount) public {
+        _whenNotPaused();
+        require(msg.sender == manager, "Safe: only manager");
+        IERC20Upgradeable(vault).transfer(to, amount);
+    }
+
+
+    function transfer(address payable receiver, string calldata symbol, uint256 amount) public virtual onlyOwners {
+        _whenNotPaused();
+        require(receiver != address(0) && receiver != address(this), "safe: non zero address & out of the safe only");
         if(keccak256(bytes(symbol)) == keccak256(bytes("BRCK"))) {
-            require(address(this).balance >= amount, "Safe: exceeds balance");
-        } else if(keccak256(bytes(symbol)) == keccak256(bytes("AND"))) {
-            require(AND.balanceOf(address(this)) >= amount, "Safe: exceeds balance");
-        } else if(keccak256(bytes(symbol)) == keccak256(bytes("VCT"))) {
-            require(id == 1, "Safe: ");
-        }
+            require(address(this).balance >= amount, "Safe: exceeds available Brick's balance");
+        } else {
+            keccak256(bytes(symbol)) == keccak256(bytes("AND"));
+            require(AND.balanceOf(address(this)) >= amount, "Safe: exceeds available AND's balance");
+        } 
         (bool success, ) = receiver.call{value: amount}("");
-        require(success, "Safe: tx failed");
-        nonce++;
+        require(success, "Safe: transfer brick failed");      
+    }
+    
+    function setManager(address _manager) public virtual {
+        require(msg.sender == address(factory), "Safe: unauthorized sender");
+        manager = _manager;
     }
 
-    function transferHash(address receiver, string memory symbol, uint256 id, uint256 amount, uint256 _nonce) public view returns(bytes32) {
-       
-        return _hashTypedDataV4(keccak256(abi.encode(
-            TRANSFER_TYPEHASH,
-            receiver,
-            symbol,
-            id,
-            amount,
-            _nonce
-            )
-        ));
-    }
-
-    function verifySiganture(bytes32 _transferHash, bytes[] memory signatures) public view returns(bool) {
-       
-        for(uint256 i = 0; i < signatures.length; i++) {
-            address signer = ECDSAUpgradeable.recover(_transferHash, signatures[i]);
-            signer = owners[i];        
-            bool valid = signer == owners[i];
-            if(!valid) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    function getChainId() external view returns (uint256) {
-        uint256 id;
-
-        assembly {
-            id := chainid()
-        }
-        return id;
-    }
-
-    function domainSeparator() external view returns(bytes32) {
-        return _domainSeparatorV4();
+    function _whenNotPaused() private view returns(bool) {
+        require(!factory.isPaused(), "Safe: contract paused");
+        return factory.isPaused();
     }
 }
+
+
+
 
 

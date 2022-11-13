@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (utils/cryptography/draft-EIP712.sol)
-
 pragma solidity ^0.8.0;
 
 import "./ECDSAUpgradeable.sol";
-import "../Proxy/Initializable.sol";
+import "../proxy/Initializable.sol";
 
 
 abstract contract EIP712Upgradeable is Initializable {
