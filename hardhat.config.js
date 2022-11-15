@@ -30,12 +30,5 @@ module.exports = {
       }
     }
   },
-  paths: {
-    sources: "./contracts",
-    scripts: "./scripts",
-    tests: "./test",
-    artifacts: "./artifacts",
-    cache: "./cache",
 
-  }
 };

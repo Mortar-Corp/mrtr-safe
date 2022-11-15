@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "../interfaces/IBeacon.sol";
-import "./proxy.sol";
+import "./Proxy.sol";
 import "./ERC1967Upgrade.sol";
 
 contract BeaconProxy is Proxy, ERC1967Upgrade {

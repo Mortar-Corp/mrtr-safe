@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "../interfaces/IERC165Upgradeable.sol";
 
+
 interface IERC721Modified is IERC165Upgradeable {
 
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
@@ -13,7 +14,11 @@ interface IERC721Modified is IERC165Upgradeable {
 
     function __Estate_init(address safeAddress, address owner, uint256 taxId) external payable;
 
-    function tokenMetadata(uint256 tokenId) external view returns(string memory, string memory, string memory);
+    function name(uint256 tokenId) external view returns(string memory);
+
+    function symbol(uint256 tokenId) external view returns(string memory);
+
+    function tokenUri(uint256 tokenId) external view returns(string memory);
 
     function balanceOf(address owner) external view returns (uint256 balance);
 
@@ -51,6 +56,7 @@ interface IERC721Modified is IERC165Upgradeable {
         uint256 tokenId
     ) external;
 
+
     function transferFrom(
         address from,
         address to,
@@ -62,6 +68,6 @@ interface IERC721Modified is IERC165Upgradeable {
     function setApprovalForAll(address operator, bool _approved) external;
 
     function getApproved(uint256 tokenId) external view returns (address operator);
-    
+
     function isApprovedForAll(address owner, address operator) external view returns (bool);
 }
