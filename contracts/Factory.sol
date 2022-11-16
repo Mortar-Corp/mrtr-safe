@@ -9,7 +9,17 @@ import "./proxy/UpgradeableBeacon.sol";
 import "./MrtrSafe.sol";
 import "./interfaces/IFactory.sol";
 
-
+/**
+ *@title Factory
+ *@author Sasha Flores
+ *@notice gateway to Mortar's uers to create safe
+ * Mortar is the owner who is responsible for upgrade,
+ * pause, & unpause of operations, & assigning manager
+ * for safes.
+ * manager can be responsible for more than one safe.
+ * owner can have more than one safe.
+ * safe can have more than one owner.
+ */
 contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable, IFactory {
 
     address private safeBeacon;

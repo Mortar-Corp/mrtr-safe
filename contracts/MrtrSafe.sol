@@ -5,6 +5,7 @@ import "./ReceiveBrick.sol";
 import "./Owners.sol";
 import "./proxy/Initializable.sol";
 import "./cryptography/EIP712Upgradeable.sol";
+import "./cryptography/SignatureCheckerUpgradeable.sol";
 import "./interfaces/IERC1155Modified.sol";
 import "./token/ERC1155HolderModified.sol";
 import "./interfaces/IERC20Upgradeable.sol";
@@ -14,7 +15,18 @@ import "./utils/AddressUpgradeable.sol";
 import "./token/ERC20Upgradeable.sol";
 import "./interfaces/IFactory.sol";
 
-
+/**
+ *@title MrtrSafe
+ *@author Sasha Flores
+ *@notice safe is designed to hold all assets
+ * assets are minted directly to safe.
+ * owners are responsible for transferring nft
+ * to vault, `BRCK` native coin to safe or address,
+ * & approving vault address as a spender 
+ * of `AND` collateral token.
+ * manager is authorized to transfer fractions,
+ * & tranfer business VCTs.
+ */
 
 contract MrtrSafe is 
     Initializable,
@@ -32,10 +44,11 @@ contract MrtrSafe is
     address private constant AND = 0xd9145CCE52D386f254917e481eB44e9943F39138;
     IFactory private factory;
 
+    // transfer fractions & VCT business
     address public manager;
 
-    uint256 private nonce;
-    mapping(bytes32 => bool) private executed;
+    // assets storage
+    uint256 private _nonce;
     mapping(address => bool) private exists;
     mapping(string => Asset) private assets;
 
@@ -46,7 +59,14 @@ contract MrtrSafe is
         uint256 id;
     }
 
+    //keccak256("Transfer(address receiver,string symbol,uint256 amount,uint256 id,uint256 nonce)")
+    bytes32 private constant TRANSFER_TYPEHASH = 0xb226c456cea1343f3e1288eb20976517dd4037eddc180f552a49dcf42a15d229;
+
+    //keccak256("Approve(address spender,uint256 amount,uint256 nonce)")
+    bytes32 private constant APPROVE_TYPEHASH = 0xcc14a4b433c79d829b71a51edd110b7d3541709fe9814a4aed7bc0febdb0353e;
   
+    
+    
     function __MrtrSafe_init(address[] memory _owners, uint256 _minApprovals) public payable virtual initializer {
         __Owners_init(_owners, _minApprovals);
         __EIP712_init("MrtrSafe", "1.0.0");
@@ -57,6 +77,33 @@ contract MrtrSafe is
         _nonZero(msg.sender);
     }
 
+    function domainSeparator() external virtual view returns(bytes32) {
+        return _domainSeparatorV4();
+    }
+
+    function getChainId() external virtual view returns (uint256) {
+        uint256 id;
+        assembly {
+            id := chainid()
+        }
+        return id;
+    }
+
+    function protocolName() external virtual view returns(string memory) {
+        return string(abi.encodePacked(_EIP712NameHash()));
+    }
+
+    function version() external virtual view returns(string memory) {
+        return string(abi.encodePacked(_EIP712VersionHash()));
+    }
+
+    function NameHash() external virtual view returns(bytes32) {
+        return _EIP712NameHash();
+    }
+
+    function versionHash() external virtual view returns(bytes32) {
+        return _EIP712VersionHash();
+    }
 
     function listAsset(address assetAddress, string memory symbol, string memory name, uint256 id) public virtual {
         _whenNotPaused();
@@ -66,42 +113,37 @@ contract MrtrSafe is
         require(msg.sender == manager || ownerExists(msg.sender), "Safe: unauthorized user");
         require(assetAddress != VCT && assetAddress != AND, "Safe: VCT & AND are listed");
         if(id != 0) {
-            require
-            (
+            require(
                 keccak256(
-                    abi.encodePacked(
+                    bytes(
                         IERC721Modified(assetAddress).name(id)
                     )
-                ) == keccak256(abi.encodePacked(name)),
+                ) == keccak256(bytes(name)),
                 "Safe: name of Estate mismatch input entry"
             );
-            require
-            (
+            require(
                 keccak256(
-                    abi.encodePacked(
+                    bytes(
                         IERC721Modified(assetAddress).symbol(id)
                     )
-                ) == keccak256(abi.encodePacked(symbol)),
+                ) == keccak256(bytes(symbol)),
                 "Safe: symbol of Estate mismatch input entry"
             );
-            assets[symbol] = Asset(assetAddress, symbol, name, id);
         } else {
-            require
-            (
+            require(
                 keccak256(
-                    abi.encodePacked(
+                    bytes(
                         ERC20Upgradeable(assetAddress).name()
                     )
-                ) == keccak256(abi.encodePacked(name)),
+                ) == keccak256(bytes(name)),
                 "Safe: name of vault mismatch input name"
             );
-            require
-            (
+            require(
                 keccak256(
-                    abi.encodePacked(
+                    bytes(
                         ERC20Upgradeable(assetAddress).symbol()
                     )
-                ) == keccak256(abi.encodePacked(symbol)),
+                ) == keccak256(bytes(symbol)),
                 "Safe: symbol of vault mismatch input symbol"
             );
         }
@@ -109,56 +151,102 @@ contract MrtrSafe is
         exists[assetAddress] = true;
     }
 
-
-
-    // function approve(address spender, uint256 amount) public returns(bool) {
-    //     return AND.approve(spender, amount);
-    // }
-
-
-    //checks BRCK balance per safe not per address
-    function BRCKBalance() public view virtual returns(uint256) {
-        return address(this).balance;
+    function approveHash(address spender, uint256 amount, uint256 nonce) public virtual view returns(bytes32) {
+        return _hashTypedDataV4(keccak256(abi.encode(APPROVE_TYPEHASH, spender, amount, nonce)));
     }
 
-    function assetExists(address asset) public view virtual returns(bool) {
-        return exists[asset];
+    function transferHash(
+        address receiver, 
+        string memory symbol, 
+        uint256 amount, 
+        uint256 id, 
+        uint256 nonce
+    ) public virtual view returns(bytes32) {
+        return _hashTypedDataV4(keccak256(abi.encode(TRANSFER_TYPEHASH,receiver, symbol, amount, id, nonce)));
     }
 
-    // will be moved to signature
-    function transferEstateToken(address contractAddress, address to, uint256 tokenId) public {
-        _whenNotPaused();
-        IERC721Modified(contractAddress).safeTransferFrom(address(this), to, tokenId);
+    function verifySignature(address signer, bytes32 txHash, bytes memory signature) public virtual view returns(bool) {
+        return ownerExists(signer) && SignatureCheckerUpgradeable.isValidSignatureNow(signer, txHash, signature);
     }
 
-    // function Transferfractions(address to) public {
-    //     _whenNotPaused();
-    //     _nonZero(to);
-    //     _isContract(to);
-    //     require(msg.sender == manager, "Safe: only manager");
-    //     IERC20Upgradeable(assets[]).transfer(to, amount);
-    // }
-
-    function transferBusiness(address to) public virtual {
-        require(msg.sender == manager, "Safe: only manager");
-        _nonZero(to);
-        _isContract(to);
-        IERC1155Modified(VCT).safeTransferFrom(address(this), to, 1, 1, "");
+    function approve(address spender, uint256 amount, bytes calldata signatures) public virtual returns(bool) {
+        bytes32 hash = approveHash(spender, amount, _nonce);
+        require(signatures.length >= minApproval, "Safe: min signatures not met");
+        require(verifySignature(msg.sender, hash, signatures), "Safe: invalid signature");
+        _nonce ++;
+        return IERC20Upgradeable(AND).approve(spender, amount);
     }
 
-
-    function transfer(address payable receiver, string calldata symbol, uint256 amount) public virtual onlyOwners {
+        
+    function transfer(
+        address payable receiver, 
+        string memory symbol, 
+        uint256 amount, 
+        uint256 id, 
+        bytes calldata signatures
+    ) public virtual onlyOwners {
         _whenNotPaused();
         _nonZero(receiver);
         require(receiver != address(this), "safe: transfer to this safe");
-        if(keccak256(bytes(symbol)) == keccak256(bytes("BRCK"))) {
+
+        bytes32 hash = transferHash(receiver, symbol, amount, id, _nonce);
+        require(verifySignature(msg.sender, hash, signatures), "Safe: invalid signature");
+        require(signatures.length >= minApproval, "Safe: min signatures not met");
+
+        if(id != 0) {
+            _isContract(receiver);
+            require(keccak256(bytes(symbol)) == keccak256(bytes(IERC721Modified(assets[symbol].assetAddress).symbol(id))));
+            require(assetExists(address(IERC721Modified(assets[symbol].assetAddress))), "Safe: asset not listed");
+            
+            IERC721Modified(assets[symbol].assetAddress).safeTransferFrom(address(this), receiver, id, "");
+
+        } else if(keccak256(bytes(symbol)) == keccak256(bytes("BRCK"))) {
             require(address(this).balance >= amount, "Safe: exceeds available Brick's balance");
+            
+            (bool success, ) = receiver.call{value: amount}("");
+            require(success, "Safe: transfer brick failed"); 
+
+        } else if(keccak256(bytes(symbol)) == keccak256(bytes("AND"))) {
+            require(
+                IERC20Upgradeable(AND).balanceOf(address(this)) >= amount, 
+                "Safe: exceeds available AND's balance"
+            );
+            IERC20Upgradeable(AND).transfer(receiver, amount);
         } else {
-            keccak256(bytes(symbol)) == keccak256(bytes("AND"));
-            //require(AND.balanceOf(address(this)) >= amount, "Safe: exceeds available AND's balance");
-        } 
-        (bool success, ) = receiver.call{value: amount}("");
-        require(success, "Safe: transfer brick failed");      
+            revert("Safe: wrong entry or manager required");
+        }
+
+        _nonce ++;
+    }
+
+    function currentNonce() public virtual view returns(uint256) {
+        return _nonce;
+    }
+
+    //checks BRCK balance per safe not per address
+    function BRCKBalance() public virtual view  returns(uint256) {
+        return address(this).balance;
+    }
+
+    function assetExists(address asset) public virtual view returns(bool) {
+        return exists[asset];
+    }
+
+    function Transferfractions(string memory symbol, address to) public virtual {
+        _whenNotPaused();
+        _nonZero(to);
+        _isContract(to);
+        require(msg.sender == manager, "Safe: only manager");
+        require(assetExists(address(ERC20Upgradeable(assets[symbol].assetAddress))), "Safe: asset not listed");
+        ERC20Upgradeable(assets[symbol].assetAddress).transfer(to, ERC20Upgradeable(assets[symbol].assetAddress).balanceOf(address(this)));
+    }
+
+    function transferBusiness(address to) public virtual {
+        require(msg.sender == manager, "Safe: only manager");
+        require(IERC1155Modified(VCT).isVerified(address(this)), "Safe: safe is not verified");
+        _nonZero(to);
+        _isContract(to);
+        IERC1155Modified(VCT).safeTransferFrom(address(this), to, 1, 1, "");
     }
     
     function setManager(address _manager) public virtual {
