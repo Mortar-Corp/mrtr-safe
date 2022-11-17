@@ -67,6 +67,7 @@ contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable, IFac
         return safeBeacon;
     }
 
+    // set manager to manage safe
     function setManager(address safe, address manager) public virtual override onlyOwner whenNotPaused returns(bool) {
         require(manager != address(0), "Factory: non zero address only");
         (bool success, ) = 
@@ -75,39 +76,48 @@ contract Factory is Initializable, OwnableUpgradeable, PausableUpgradeable, IFac
         managers[manager].push(safe);
         return success;
     }
-
+    
+    // returns safes by manager address
     function managerSafes(address manager) external view virtual override returns(address[] memory) {
         return managers[manager];
     }
 
+    // returns total safes by manager address
     function managerSafesCount(address manager) external view virtual override returns(uint256) {
         return managers[manager].length;
     }
 
+    // returns safe by manager address & safe id
     function managerSafeId(address manager, uint256 id) external view virtual override returns(address) {
         return managers[manager][id];
     }
 
+    // returns all safes
     function allSafes() external view virtual override returns(address[] memory) {
         return safeProxies;
     }
 
+    // returns total safes
     function safesCount() external view virtual override returns(uint256) {
         return safeProxies.length;
     }
 
+    // returns safe by id
     function safeAddress(uint256 id) external view virtual override returns(address) {
         return safeProxies[id];
     }
 
+    // returns safes by owner address
     function getOwnerSafes(address owner) external view virtual override returns(address[] memory) {
         return ownerSafes[owner];
     }
 
+    // returns total safes by owner
     function ownerSafesCount(address owner) external view virtual override returns(uint256) {
         return ownerSafes[owner].length;
     }
 
+    // returns safe by owner & id
     function ownerSafeId(address owner, uint256 id) external view virtual override returns(address) {
         return ownerSafes[owner][id];
     }

@@ -13,6 +13,8 @@ coverage
 coverage.json
 typechain
 typechain-types
-cache
+test/safe.test.js
+
+
 
 

@@ -105,6 +105,7 @@ contract MrtrSafe is
         return _EIP712VersionHash();
     }
 
+    // list assets except for VCT & AND can be done by owners or manager
     function listAsset(address assetAddress, string memory symbol, string memory name, uint256 id) public virtual {
         _whenNotPaused();
         _nonZero(assetAddress);
@@ -169,6 +170,7 @@ contract MrtrSafe is
         return ownerExists(signer) && SignatureCheckerUpgradeable.isValidSignatureNow(signer, txHash, signature);
     }
 
+    // approve spender to spend amount of AND
     function approve(address spender, uint256 amount, bytes calldata signatures) public virtual returns(bool) {
         bytes32 hash = approveHash(spender, amount, _nonce);
         require(signatures.length >= minApproval, "Safe: min signatures not met");
@@ -177,7 +179,7 @@ contract MrtrSafe is
         return IERC20Upgradeable(AND).approve(spender, amount);
     }
 
-        
+    // transfer BRCK, AND, Estate token only as fractions & VCT are manager's responsibility
     function transfer(
         address payable receiver, 
         string memory symbol, 
@@ -228,10 +230,12 @@ contract MrtrSafe is
         return address(this).balance;
     }
 
+    // true if asset has been listed
     function assetExists(address asset) public virtual view returns(bool) {
         return exists[asset];
     }
 
+    // accessible by mananger only
     function Transferfractions(string memory symbol, address to) public virtual {
         _whenNotPaused();
         _nonZero(to);
@@ -241,6 +245,7 @@ contract MrtrSafe is
         ERC20Upgradeable(assets[symbol].assetAddress).transfer(to, ERC20Upgradeable(assets[symbol].assetAddress).balanceOf(address(this)));
     }
 
+    // accessible by manager only
     function transferBusiness(address to) public virtual {
         require(msg.sender == manager, "Safe: only manager");
         require(IERC1155Modified(VCT).isVerified(address(this)), "Safe: safe is not verified");
@@ -249,6 +254,7 @@ contract MrtrSafe is
         IERC1155Modified(VCT).safeTransferFrom(address(this), to, 1, 1, "");
     }
     
+    // to set manager for safe
     function setManager(address _manager) public virtual {
         require(msg.sender == address(factory), "Safe: unauthorized sender");
         manager = _manager;
@@ -268,8 +274,3 @@ contract MrtrSafe is
     }
 
 }
-
-
-
-
-
